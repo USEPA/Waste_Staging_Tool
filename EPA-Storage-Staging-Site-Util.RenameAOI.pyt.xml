@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20200810</CreaDate>
+		<CreaTime>15290200</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="Load New AOI" name="LoadNewAOI">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="AOI ID" name="AOIID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the AOI you wish to rename.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="New AOI ID" name="NewAOIID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Enter a unique and meaningful name for the new Area of Interest name.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>

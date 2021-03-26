@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20200810</CreaDate>
+		<CreaTime>07373300</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="Load New AOI" name="LoadNewAOI">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="AOI ID" name="AOIID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Enter a unique and meaningful name for the Area of Interest.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="AOI Polygon" name="AOIPolygon" datatype="GPFeatureRecordSetLayer" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Provide a polygon that represents the Area of Interest. To use an existing AOI polygon click the file icon to navigate to your file or click the pencil icon to draw a new AOI polygon.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="NED Slope Raster" name="NEDSlopeRaster" datatype="DERasterDataset" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the NED Slope Raster essential data layer. This layer is used by the suitability model to determine the percent change in elevation.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="National Land Cover Raster" name="NationalLandCoverRaster" datatype="DERasterDataset" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the National Land Cover Raster essential data layer. This layer is used by the suitability model to determine the type of land cover (e.g., rock, mixed forest, grassland, etc.).</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="National Hydrography Dataset" name="NationalHydrographyDataset" datatype="DEFeatureClass" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the National Hydrography Dataset essential data layer. This layer is used by the suitability model to determine the distance from water.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="TNM Roads" name="TNMRoads" datatype="DEFeatureClass" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select The National Map (TNM) Roads essential data layer. This layer is used by the suitability model to determine the distance from roads.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Esri SSURGO" name="EsriSSURGO" datatype="DEFeatureClass" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the Esri Soil Survey Geographic Database (SSURGO) data essential data layer. This layer is used by the suitability model to determine the soil infiltration based on the hydrologic soil group.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Optional Notes" name="OptionalNotes" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Optionally, add any relevant notes to describe the Area of Interest layer.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>

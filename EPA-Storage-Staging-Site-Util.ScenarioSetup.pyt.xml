@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20200810</CreaDate>
+		<CreaTime>07435500</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="Scenario Setup" name="ScenarioSetup">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="Purge Existing Scenarios" name="PurgeExistingScenarios" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Purges any scenarios that are currently in the geodatabase to help free up space.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20200810</CreaDate>
+		<CreaTime>07363100</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="AOI Setup" name="AOISetup">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="Purge Existing AOIs" name="PurgeExistingAOIs" datatype="GPBoolean" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Purges any AOIs that are currently in the AOI Storage Location to help free up space.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Load Sample AOIs" name="LoadSampleAOIs" datatype="GPBoolean" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Loads in Sample AOIs which can be helpful for learning how to use EPA's Waste Storage and Staging Site Selection Tool.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="AOI Storage Location" name="AOIStorageLocation" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select a location to store the AOI or select from an existing AOI.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>

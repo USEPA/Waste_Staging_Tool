@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20200810</CreaDate>
+		<CreaTime>08371000</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="Load New Scenario" name="LoadNewScenario">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="Scenario ID" name="ScenarioID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Enter a unique and meaningful name for the scenario.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="AOI ID" name="AOIID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the AOI you wish to use with this scenario.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Load NED Slope" name="LoadNEDSlope" datatype="GPBoolean" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Included by default, the tool loads the NED Slope essential data layer. This layer is used by the suitability model to deter me the percent change in elevation.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Load Land Cover" name="LoadLandCover" datatype="GPBoolean" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Included by default, the tool loads the National Land Cover essential data layer. This layer is used by the suitability model to determine the type of land cover (e.g., rock, mixed forest, grassland, etc.).</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Load NHD" name="LoadNHD" datatype="GPBoolean" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Included by default, the tool loads the National Hydrography Dataset essential data layer. This layer is used by the suitability model to determine the distance from water.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="NHD Grid Size (Meters)" name="NHDGridSize" datatype="GPDouble" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Specify a grid size for use in the analysis that is different than the default grid size used.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Load TNM Roads" name="LoadTNMRoads" datatype="GPBoolean" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Included by default, the tool loads the TNM Roads essential data layer. This layer is used by the suitability model to determine the distance from roads.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="TNM Roads Grid Size (Meters)" name="TNMRoadsGridSize" datatype="GPDouble" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Specify a grid size for use in the analysis that is different than the default grid size used.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Load SSURGO" name="LoadSSURGO" datatype="GPBoolean" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Included by default, the tool loads the Esri SSURGO essential data layer. This layer is used by the suitability model to determine the soil infiltration based on the hydrologic soil group.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Esri SSURGO Grid Size (Meters)" name="EsriSSURGOGridSize" datatype="GPDouble" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Specify a grid size for use in the analysis that is different than the default grid size used.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Optional Notes" name="OptionalNotes" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Optionally, add any relevant notes to describe the scenario.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>

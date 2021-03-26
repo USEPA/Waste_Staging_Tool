@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20201203</CreaDate>
+		<CreaTime>17051300</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="Confirm Suitability Criteria" name="ConfirmSuitabilityCriteria">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="Scenario ID" name="ScenarioID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the scenario to run the reclassification step on.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Map Name" name="MapName" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the map to place the reclassification layer on.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Slope Reclassification" name="SlopeReclassification" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Suitability exclusion thresholds are established by default. Adjust threshold settings based on source data attributes to refine model exclusion parameters.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Land Cover Reclassification" name="LandCoverReclassification" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Suitability exclusion thresholds are established by default. Adjust threshold settings based on source data attributes to refine model exclusion parameters.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Surface Water Reclassification" name="SurfaceWaterReclassification" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Suitability exclusion thresholds are established by default. Adjust threshold settings based on source data attributes to refine model exclusion parameters.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Road Reclassification" name="RoadReclassification" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Suitability exclusion thresholds are established by default. Adjust threshold settings based on source data attributes to refine model exclusion parameters.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Soil Group Reclassification" name="SoilGroupReclassification" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Suitability exclusion thresholds are established by default. Adjust threshold settings based on source data attributes to refine model exclusion parameters.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>

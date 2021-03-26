@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20200807</CreaDate>
+		<CreaTime>11494300</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+		<ModDate>20201229</ModDate>
+		<ModTime>115914</ModTime>
+		<DataProperties>
+			<lineage>
+				<Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\Toolboxes\Data Management Tools.tbx\Rename" Date="20200807" Time="120256">Rename C:\Users\PDziemiela\Documents\GitHub\EPA_Storage_Staging_Site_Tool\shitter.pyt C:\Users\PDziemiela\Documents\GitHub\EPA_Storage_Staging_Site_Tool\EPA-Storage-Staging-Site-Tool.pyt #</Process>
+			</lineage>
+		</DataProperties>
+	</Esri>
+	<toolbox name="EPA-Storage-Staging-Site-Tool" alias="StorageStagingSiteTool">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<toolsets/>
+	</toolbox>
+	<dataIdInfo>
+		<idCitation>
+			<resTitle>EPA-Storage-Staging-Site-Tool</resTitle>
+		</idCitation>
+	</dataIdInfo>
+	<distInfo>
+		<distributor>
+			<distorFormat>
+				<formatName>ArcToolbox Toolbox</formatName>
+			</distorFormat>
+		</distributor>
+	</distInfo>
+</metadata>

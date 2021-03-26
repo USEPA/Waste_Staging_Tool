@@ -1,0 +1,25 @@
+{
+   "aoistorage": "default",
+   "sampledata": [
+      {
+         "aoi_id": "NewMunster",
+         "zipfile": "NewMunster.zip",
+         "filegdb": "NewMunster.gdb",
+         "aoifc": "AOI",
+         "loadslope": true,
+         "sloperaster": "SLOPE",
+         "loadlandcover": true,
+         "landcoverraster": "LANDCOVER",
+         "loadnhd": true,
+         "nhdfc": "NHD",
+         "loadroads": true,
+         "roadsfc": "ROADS",
+         "loadssurgo": true,
+         "ssurgofc": "SSURGO",
+         "username": "ERG",
+         "datecreated": "2020-03-10",
+         "vectorbuffer": 5,
+         "notes": "New Munster, Kenosha County, Wisconsin"
+      }
+   ]
+}

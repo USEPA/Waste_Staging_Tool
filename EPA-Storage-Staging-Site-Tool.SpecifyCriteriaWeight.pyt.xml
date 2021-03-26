@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20201203</CreaDate>
+		<CreaTime>17051900</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="Specify Criteria Weight" name="SpecifyCriteriaWeight">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="Scenario ID" name="ScenarioID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the scenario to run the weighted sum step on.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Map Name" name="MapName" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the map to place the weighted sum layer on.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Slope Weight" name="SlopeWeight" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Adjust the weight associated with this essential layer to reflect the relative importance compared to other essential layers.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Land Cover Weight" name="LandCoverWeight" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Adjust the weight associated with this essential layer to reflect the relative importance compared to other essential layers.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Surface Water Weight" name="SurfaceWaterWeight" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Adjust the weight associated with this essential layer to reflect the relative importance compared to other essential layers.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Road Weight" name="RoadWeight" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Adjust the weight associated with this essential layer to reflect the relative importance compared to other essential layers.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Soil Group Weight" name="SoilGroupWeight" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Adjust the weight associated with this essential layer to reflect the relative importance compared to other essential layers.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>

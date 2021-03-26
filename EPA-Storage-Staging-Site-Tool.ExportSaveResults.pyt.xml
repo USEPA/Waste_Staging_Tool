@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20201203</CreaDate>
+		<CreaTime>17052600</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+	</Esri>
+	<tool xmlns="" toolboxalias="" displayname="Export/Save Results" name="ExportSaveResults">
+		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+		<parameters>
+			<param displayname="Scenario ID" name="ScenarioID" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the scenario for which you would like to export a report.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Map Layout Graphic" name="MapLayoutGraphic" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select a layout if you would like to have a screenshot of the map included in the report. Note: You will need to have the Pillow extension installed for this to work. Select disabled if you do not have Pillow installed or do not want a screenshot of the map included in the report.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Map Layout Frame For Zoom" name="MapLayoutFrameForZoom" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>The select the map frame in the layout to utilize for automated zooming.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Auto Zoom To Layer" name="AutoZoomToLayer" datatype="GPString" direction="Input" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the layer in the map frame of the layout upon which to zoom to.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+			<param displayname="Export File" name="ExportFile" datatype="DEFile" direction="Output" type="Required">
+				<dialogReference><DIV STYLE="text-align:Left;"><DIV><P><SPAN>Select the location where you would like to save the excel report.</SPAN></P></DIV></DIV></dialogReference>
+			</param>
+		</parameters>
+	</tool>
+</metadata>
