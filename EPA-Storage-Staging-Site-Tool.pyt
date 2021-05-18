@@ -734,6 +734,16 @@ class SpecifyCriteriaWeight(object):
             if rez != "CheckedOut":
                arcpy.AddMessage("Unable to check out 3D analyst, spatial or image analyst extension");
       
+      ##---------------------------------------------------------------------##
+      # Decide whether to utilize the memory workspace or the scratch workspace
+      d = arcpy.GetInstallInfo();
+      
+      if d['Version'][:3] == '2.3':
+         wrkGDB = arcpy.env.scratchGDB;
+         
+      else:
+         wrkGDB = 'memory';      
+      
       ary_weights = [];
       
       if slopeweight is not None:
@@ -860,7 +870,7 @@ class SpecifyCriteriaWeight(object):
          )
       );
 
-      outWeightedSum.save(r"memory\scratch_" + scenario_id);
+      outWeightedSum.save(wrkGDB + os.sep + "scratch_" + scenario_id);
 
       arcpy.AddMessage(".  Converting to polygons...");
       weightedsum = os.path.join(aprx.defaultGeodatabase,scenario_id + "_WEIGHTEDSUM");
@@ -869,10 +879,10 @@ class SpecifyCriteriaWeight(object):
       # arcpy.RasterToPolygon_conversion available BASIC no extensions needed
       #########################################################################
       rez = arcpy.RasterToPolygon_conversion(
-          r"memory\scratch_" + scenario_id
-         ,weightedsum
-         ,"SIMPLIFY"
-         ,"VALUE"
+          in_raster            = wrkGDB + os.sep + "scratch_" + scenario_id
+         ,out_polygon_features = weightedsum
+         ,simplify             = "SIMPLIFY"
+         ,raster_field         = "VALUE"
       );
       
       if rez.status == 4:
@@ -882,7 +892,7 @@ class SpecifyCriteriaWeight(object):
 
       arcpy.AddMessage(".  Postprocessing...");
       arcpy.Delete_management(
-         r"memory\scratch_" + scenario_id
+         wrkGDB + os.sep + "scratch_" + scenario_id
       );
 
       util.addField(
@@ -978,8 +988,8 @@ class SpecifyCriteriaWeight(object):
          ssurgoweight = 'None';
 
       with arcpy.da.UpdateCursor(
-          aprx.defaultGeodatabase + os.sep + util.g_scenario_fc
-         ,[
+          in_table    = aprx.defaultGeodatabase + os.sep + util.g_scenario_fc
+         ,field_names = [
              'scenario_id'
             ,'analysis_complete'
             ,'slopeweight'

@@ -573,16 +573,26 @@ class LoadNewAOI(object):
       existing_aois = util.fetchAOIIDs();
       if aoi_id in existing_aois:
          raise Exception('AOI ID already exists');
+         
+      ##---------------------------------------------------------------------##
+      # Decide whether to utilize the memory workspace or the scratch workspace
+      d = arcpy.GetInstallInfo();
+      
+      if d['Version'][:3] == '2.3':
+         wrkGDB = arcpy.env.scratchGDB;
+         
+      else:
+         wrkGDB = 'memory';
       
       ##---------------------------------------------------------------------##
       arcpy.Dissolve_management(
           in_features       = aoi_layer
-         ,out_feature_class = r"memory\inMemoryAOI"
+         ,out_feature_class = wrkGDB + os.sep + "inMemoryAOI"
       );
       
       try:
          arcpy.AddField_management(
-             r"memory\inMemoryAOI"
+             wrkGDB + os.sep + "inMemoryAOI"
             ,"geodesicArea"
             ,"DOUBLE"
             ,18
@@ -591,16 +601,16 @@ class LoadNewAOI(object):
          None;
          
       arcpy.CalculateField_management(
-          r"memory\inMemoryAOI"
-         ,"geodesicArea"
-         ,"!shape.geodesicArea@SQUAREKILOMETERS!"
-         ,"PYTHON_9.3"
+          in_table        = wrkGDB + os.sep + "inMemoryAOI"
+         ,field           = "geodesicArea"
+         ,expression      = "!shape.geodesicArea@SQUAREKILOMETERS!"
+         ,expression_type = "PYTHON_9.3"
       );
       
       num_areasqkm = None;
       with arcpy.da.SearchCursor(
-          r"memory\inMemoryAOI"
-         ,["geodesicArea"]
+          in_table    = wrkGDB + os.sep + "inMemoryAOI"
+         ,field_names = ["geodesicArea"]
       ) as cursor:
          for row in cursor:
             num_areasqkm = row[0];
@@ -615,7 +625,7 @@ class LoadNewAOI(object):
       ##---------------------------------------------------------------------##
       areaofinterest = AOI(
           aoi_id          = aoi_id
-         ,aoi_layer       = r"memory\inMemoryAOI"
+         ,aoi_layer       = wrkGDB + os.sep + "inMemoryAOI"
          ,sloperaster     = sloperaster
          ,landcoverraster = landcoverraster
          ,nhdfc           = nhdfc
@@ -2451,33 +2461,43 @@ class AOI(object):
             if row[0] == self.aoi_id:
                cursor.deleteRow();
                
+      ##---------------------------------------------------------------------##
+      # Decide whether to utilize the memory workspace or the scratch workspace
+      d = arcpy.GetInstallInfo();
+      
+      if d['Version'][:3] == '2.3':
+         wrkGDB = arcpy.env.scratchGDB;
+         
+      else:
+         wrkGDB = 'memory';
+               
       ##........................................................................##
       if self.loadnhd or self.loadroads or self.loadssurgo:
          arcpy.AddMessage(".  Generating AOI buffer...");
          
-         if arcpy.Exists(r"memory\aoi"):
-            arcpy.Delete_management(r"memory\aoi");
+         if arcpy.Exists(wrkGDB + os.sep + "aoi"):
+            arcpy.Delete_management(wrkGDB + os.sep + "aoi");
             
-         if arcpy.Exists(r"memory\aoibuffer"):
-            arcpy.Delete_management(r"memory\aoibuffer");
+         if arcpy.Exists(wrkGDB + os.sep + "aoibuffer"):
+            arcpy.Delete_management(wrkGDB + os.sep + "aoibuffer");
          
          if self.vectorbuffer == 0:
          
             arcpy.CopyFeatures_management(
                 in_features       = self.aoifc
-               ,out_feature_class = r"memory\aoibuffer"
+               ,out_feature_class = wrkGDB + os.sep + "aoibuffer"
             );
          
          else:
          
             arcpy.CopyFeatures_management(
                 in_features       = self.aoifc
-               ,out_feature_class = r"memory\aoi"
+               ,out_feature_class = wrkGDB + os.sep + "aoi"
             );
             
             arcpy.Buffer_analysis(
-                in_features              = r"memory\aoi"
-               ,out_feature_class        = r"memory\aoibuffer"
+                in_features              = wrkGDB + os.sep + "aoi"
+               ,out_feature_class        = wrkGDB + os.sep + "aoibuffer"
                ,buffer_distance_or_field = str(self.vectorbuffer) + " Kilometers"
             
             );
@@ -2530,8 +2550,8 @@ class AOI(object):
 
          arcpy.Clip_analysis(
              in_features       = self.nhdfc
-            ,clip_features     = r"memory\aoibuffer"
-            ,out_feature_class = r"memory\inMemoryNHD"
+            ,clip_features     = wrkGDB + os.sep + "aoibuffer"
+            ,out_feature_class = wrkGDB + os.sep + "inMemoryNHD"
          );
 
          util.emptyNHD(
@@ -2540,12 +2560,12 @@ class AOI(object):
          );
 
          arcpy.Append_management(
-             inputs      = r"memory\inMemoryNHD"
+             inputs      = wrkGDB + os.sep + "inMemoryNHD"
             ,target      = self.out + os.sep + self.outnhd
             ,schema_type = 'NO_TEST'
          );
 
-         arcpy.Delete_management(r"memory\inMemoryNHD");
+         arcpy.Delete_management(wrkGDB + os.sep + "inMemoryNHD");
 
       ##........................................................................##
       if self.loadroads:
@@ -2553,8 +2573,8 @@ class AOI(object):
 
          arcpy.Clip_analysis(
              in_features       = self.roadsfc
-            ,clip_features     = r"memory\aoibuffer"
-            ,out_feature_class = r"memory\inMemoryRoads"
+            ,clip_features     = wrkGDB + os.sep + "aoibuffer"
+            ,out_feature_class = wrkGDB + os.sep + "inMemoryRoads"
          );
 
          util.emptyRoads(
@@ -2563,12 +2583,12 @@ class AOI(object):
          );
 
          arcpy.Append_management(
-             inputs      = r"memory\inMemoryRoads"
+             inputs      = wrkGDB + os.sep + "inMemoryRoads"
             ,target      = self.out + os.sep + self.outroads
             ,schema_type = 'NO_TEST'
          );
          
-         arcpy.Delete_management(r"memory\inMemoryRoads");
+         arcpy.Delete_management(wrkGDB + os.sep + "inMemoryRoads");
 
       ##........................................................................##
       if self.loadssurgo:
@@ -2576,8 +2596,8 @@ class AOI(object):
 
          arcpy.Clip_analysis(
              in_features       = self.ssurgofc
-            ,clip_features     = r"memory\aoibuffer"
-            ,out_feature_class = r"memory\inMemorySSURGO"
+            ,clip_features     = wrkGDB + os.sep + "aoibuffer"
+            ,out_feature_class = wrkGDB + os.sep + "inMemorySSURGO"
          );
 
          util.emptySSURGO(
@@ -2586,7 +2606,7 @@ class AOI(object):
          );
 
          arcpy.Append_management(
-             inputs      = r"memory\inMemorySSURGO"
+             inputs      = wrkGDB + os.sep + "inMemorySSURGO"
             ,target      = self.out + os.sep + self.outssurgo
             ,schema_type = 'NO_TEST'
          );
@@ -2605,10 +2625,13 @@ def myCalc(value):
 """
          );
          
-         arcpy.Delete_management(r"memory\inMemorySSURGO");
+         arcpy.Delete_management(wrkGDB + os.sep + "inMemorySSURGO");
 
       ##........................................................................##
-      with arcpy.da.SearchCursor(self.aoifc,"shape@") as cursor:
+      with arcpy.da.SearchCursor(
+          in_table    = self.aoifc
+         ,field_names = "shape@"
+      ) as cursor:
          for row in cursor:
             aoishape = row[0];
 
@@ -2632,7 +2655,10 @@ def myCalc(value):
          ,'notes'
          ,'shape@'
       ];
-      with arcpy.da.InsertCursor(self.outfc,flds) as cursor:
+      with arcpy.da.InsertCursor(
+          in_table    = self.outfc
+         ,field_names = flds
+      ) as cursor:
          cursor.insertRow((
              self.aoi_id
             ,self.outslope
@@ -2738,6 +2764,16 @@ class Scenario(object):
          self.username = getpass.getuser();
       if self.datecreated is None:
          self.datecreated = datetime.datetime.now();
+         
+      ##---------------------------------------------------------------------##
+      # Decide whether to utilize the memory workspace or the scratch workspace
+      d = arcpy.GetInstallInfo();
+      
+      if d['Version'][:3] == '2.3':
+         wrkGDB = arcpy.env.scratchGDB;
+         
+      else:
+         wrkGDB = 'memory';
 
       ##---------------------------------------------------------------------##
       if not arcpy.Exists(cf['aoistorage']):
@@ -2771,12 +2807,12 @@ class Scenario(object):
       ##---------------------------------------------------------------------##
       if self.load_nhd or self.load_roads or self.load_ssurgo:
       
-         if arcpy.Exists(r"memory\aoi"):
-            arcpy.Delete_management(r"memory\aoi");
+         if arcpy.Exists(wrkGDB + os.sep + "aoi"):
+            arcpy.Delete_management(wrkGDB + os.sep + "aoi");
             
          arcpy.FeatureClassToFeatureClass_conversion(
              in_features  = cf['aoistorage'] + os.sep + util.g_aoi_fc
-            ,out_path     = 'memory'
+            ,out_path     = wrkGDB
             ,out_name     = 'aoi'
             ,where_clause = "aoi_id = '" + self.aoi_id + "'"
          );
@@ -2807,8 +2843,8 @@ class Scenario(object):
       ##---------------------------------------------------------------------##
       if self.load_nhd:
          
-         if arcpy.Exists(r"memory\nhdtemp"):
-            arcpy.Delete_management(r"memory\nhdtemp");
+         if arcpy.Exists(wrkGDB + os.sep + "nhdtemp"):
+            arcpy.Delete_management(wrkGDB + os.sep + "nhdtemp");
 
          nhdEucDistance = arcpy.sa.EucDistance(
              in_source_data  = cf['aoistorage'] + os.sep + self.aoi_id + '_NHD'
@@ -2816,23 +2852,23 @@ class Scenario(object):
             ,distance_method = "GEODESIC"
          );
 
-         nhdEucDistance.save(r"memory\nhdtemp");
+         nhdEucDistance.save(wrkGDB + os.sep + "nhdtemp");
          
          arcpy.Clip_management(
-             in_raster           = r"memory\nhdtemp"
+             in_raster           = wrkGDB + os.sep + "nhdtemp"
             ,out_raster          = self.aprx.defaultGeodatabase + os.sep + self.scenario_id + '_EXTRACT_NHD'
-            ,in_template_dataset = r"memory\aoi"
+            ,in_template_dataset = wrkGDB + os.sep + "aoi"
             ,nodata_value        = -1
             ,clipping_geometry   = 'ClippingGeometry'
          );
          
-         arcpy.Delete_management(r"memory\nhdtemp");
+         arcpy.Delete_management(wrkGDB + os.sep + "nhdtemp");
 
       ##---------------------------------------------------------------------##
       if self.load_roads:
       
-         if arcpy.Exists(r"memory\roadstemp"):
-            arcpy.Delete_management(r"memory\roadstemp");
+         if arcpy.Exists(wrkGDB + os.sep + "roadstemp"):
+            arcpy.Delete_management(wrkGDB + os.sep + "roadstemp");
       
          roadsEucDistance = arcpy.sa.EucDistance(
              in_source_data  = cf['aoistorage'] + os.sep + self.aoi_id + '_ROADS'
@@ -2840,17 +2876,17 @@ class Scenario(object):
             ,distance_method = "GEODESIC"
          );
 
-         roadsEucDistance.save(r"memory\roadstemp");
+         roadsEucDistance.save(wrkGDB + os.sep + "roadstemp");
          
          arcpy.Clip_management(
-             in_raster           = r"memory\roadstemp"
+             in_raster           = wrkGDB + os.sep + "roadstemp"
             ,out_raster          = self.aprx.defaultGeodatabase + os.sep + self.scenario_id + '_EXTRACT_ROADS'
-            ,in_template_dataset = r"memory\aoi"
+            ,in_template_dataset = wrkGDB + os.sep + "aoi"
             ,nodata_value        = -1
             ,clipping_geometry   = 'ClippingGeometry'
          );
          
-         arcpy.Delete_management(r"memory\roadstemp");
+         arcpy.Delete_management(wrkGDB + os.sep + "roadstemp");
 
       ##---------------------------------------------------------------------##
       # Note this vector buffer handling is not really needed for SSURGO polygons
@@ -2860,27 +2896,27 @@ class Scenario(object):
       ##---------------------------------------------------------------------##
       if self.load_ssurgo:
       
-         if arcpy.Exists(r"memory\ssurgotemp"):
-            arcpy.Delete_management(r"memory\ssurgotemp");
+         if arcpy.Exists(wrkGDB + os.sep + "ssurgotemp"):
+            arcpy.Delete_management(wrkGDB + os.sep + "ssurgotemp");
          
          arcpy.PolygonToRaster_conversion(
              in_features       = cf['aoistorage'] + os.sep + self.aoi_id + '_SSURGO'
             ,value_field       = "hydgrpdcd"
-            ,out_rasterdataset = r"memory\ssurgotemp"
+            ,out_rasterdataset = wrkGDB + os.sep + "ssurgotemp"
             ,cell_assignment   = "CELL_CENTER"
             ,priority_field    = None
             ,cellsize          = self.ssurgogridsize
          );
 
          arcpy.Clip_management(
-             in_raster           = r"memory\ssurgotemp"
+             in_raster           = wrkGDB + os.sep + "ssurgotemp"
             ,out_raster          = self.aprx.defaultGeodatabase + os.sep + self.scenario_id + '_EXTRACT_SSURGO'
-            ,in_template_dataset = r"memory\aoi"
+            ,in_template_dataset = wrkGDB + os.sep + "aoi"
             ,nodata_value        = -1
             ,clipping_geometry   = 'ClippingGeometry'
          );
          
-         arcpy.Delete_management(r"memory\ssurgotemp");
+         arcpy.Delete_management(wrkGDB + os.sep + "ssurgotemp");
                  
    #...........................................................................
    def write(self):
@@ -2913,14 +2949,20 @@ class Scenario(object):
       boo_exists = False;
 
       ##........................................................................##
-      with arcpy.da.SearchCursor(self.aprx.defaultGeodatabase + os.sep + util.g_scenario_fc,"scenario_id") as cursor:
+      with arcpy.da.SearchCursor(
+          in_table    = self.aprx.defaultGeodatabase + os.sep + util.g_scenario_fc
+         ,field_names = "scenario_id"
+      ) as cursor:
          for row in cursor:
             if row[0] == self.scenario_id:
                boo_exists = True;
 
       ##........................................................................##
       if boo_exists:
-         with arcpy.da.UpdateCursor(self.aprx.defaultGeodatabase + os.sep + util.g_scenario_fc,self.flds) as cursor:
+         with arcpy.da.UpdateCursor(
+             in_table    = self.aprx.defaultGeodatabase + os.sep + util.g_scenario_fc
+            ,field_names = self.flds
+         ) as cursor:
             for row in cursor:
                if row[0] == self.scenario_id:
                   row[1]  = self.analysis_complete
@@ -2943,7 +2985,10 @@ class Scenario(object):
                   break;
 
       else:
-         with arcpy.da.InsertCursor(self.aprx.defaultGeodatabase + os.sep + util.g_scenario_fc,self.flds) as cursor:
+         with arcpy.da.InsertCursor(
+             in_table    = self.aprx.defaultGeodatabase + os.sep + util.g_scenario_fc
+            ,field_names = self.flds
+         ) as cursor:
             cursor.insertRow((
                 self.scenario_id
                ,self.analysis_complete
