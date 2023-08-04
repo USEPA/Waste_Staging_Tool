@@ -2,7 +2,7 @@
 
 The Waste Storage and Staging Tool identifies and ranks potential locations for staging and storing waste. Using a site suitability analysis, the tool considers complicating suitability factors such as soil type, land cover, topography, ease of transportation, and proximity to surface waters. The tool will analyze the various siting criteria for a specified geographic area to identify candidate sites and their total available land surface areas. These criteria can be ranked according to degree of importance and automatically evaluated according to “best fit.” Users can combine the resulting suitability ratings with other important geospatial data to aid in the selection of candidate areas. The tool will allow a user to designate one or more areas within a geographic area of interest, specify attributes and rationale for selection, and save the output for use with other tools or analyses.
 
-Access the [Waste Storage Staging Site Tool User's Guide](/Docs/Final_Waste-Storage-Staging-Tool-Users-Guide_ArcGISPro_02202021.docx) for step-by-step instructions on using the tool.
+Access the [Waste Storage Staging Site Tool User's Guide](/Docs/Final_Waste-Storage-Staging-Tool-Users-Guide_ArcGISPro) for step-by-step instructions on using the tool.
 
 ## Documentation
 - [How to contribute to the project](/Docs/CONTRIBUTING.md), learn how to help improve the application. 
