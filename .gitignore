@@ -135,3 +135,5 @@ Index/
 Scratch/
 .pyHistory
 .backups
+GpMessages/
+*.xlsx

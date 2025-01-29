@@ -30,6 +30,7 @@ class Toolbox(object):
       self.tools.append(DuplicateScenario);
       self.tools.append(AddScenarioToMap);
       self.tools.append(RasterToResults);
+      self.tools.append(PolygonToResults);
 
 ###############################################################################
 class AOISetup(object):
@@ -220,23 +221,23 @@ class AOISetup(object):
          arcpy.management.AddFields(
              util.g_aoi_fc
             ,[
-                ['aoi_id'                    ,'TEXT'  ,'Area of Interest ID'        ,255, None,'']
-               ,['sloperaster'               ,'TEXT'  ,'Slope Raster'               ,255, None,'']
-               ,['sloperastersource'         ,'TEXT'  ,'Slope Raster Source'        ,2000,None,'']
-               ,['slopegridsize'             ,'DOUBLE','Slope Grid Size (m2)'       ,None,None,'']
-               ,['landcoverraster'           ,'TEXT'  ,'Land Cover Raster'          ,255, None,'']
-               ,['landcoverrastersource'     ,'TEXT'  ,'Land Cover Raster Source'   ,2000,None,'']
-               ,['landcovergridsize'         ,'DOUBLE','Land Cover Grid Size (m2)'  ,None,None,'']
-               ,['nhdfc'                     ,'TEXT'  ,'NHD Feature Class'          ,255, None,'']
-               ,['nhdfcsource'               ,'TEXT'  ,'NHD Source'                 ,2000,None,'']
-               ,['roadsfc'                   ,'TEXT'  ,'Roads Feature Class'        ,255, None,'']
-               ,['roadsfcsource'             ,'TEXT'  ,'Roads Feature Class Source' ,2000,None,'']
-               ,['ssurgofc'                  ,'TEXT'  ,'SSURGO Feature Class'       ,255, None,'']
-               ,['ssurgofcsource'            ,'TEXT'  ,'SSURGO Feature Class Source',2000,None,'']
-               ,['vectorbuffer'              ,'DOUBLE','Vector Buffer Amount (Km)'  ,None,None,'']
-               ,['username'                  ,'TEXT'  ,'User Name'                  ,255, None,'']
-               ,['datecreated'               ,'DATE'  ,'Date Created'               ,None,None,'']
-               ,['notes'                     ,'TEXT'  ,'Notes'                      ,255, None,'']
+                ['aoi_id'                    ,'TEXT'    ,'Area of Interest ID'        ,255, None,'']
+               ,['sloperaster'               ,'TEXT'    ,'Slope Raster'               ,255, None,'']
+               ,['sloperastersource'         ,'TEXT'    ,'Slope Raster Source'        ,2000,None,'']
+               ,['slopegridsize'             ,'DOUBLE'  ,'Slope Grid Size (m2)'       ,None,None,'']
+               ,['landcoverraster'           ,'TEXT'    ,'Land Cover Raster'          ,255, None,'']
+               ,['landcoverrastersource'     ,'TEXT'    ,'Land Cover Raster Source'   ,2000,None,'']
+               ,['landcovergridsize'         ,'DOUBLE'  ,'Land Cover Grid Size (m2)'  ,None,None,'']
+               ,['nhdfc'                     ,'TEXT'    ,'NHD Feature Class'          ,255, None,'']
+               ,['nhdfcsource'               ,'TEXT'    ,'NHD Source'                 ,2000,None,'']
+               ,['roadsfc'                   ,'TEXT'    ,'Roads Feature Class'        ,255, None,'']
+               ,['roadsfcsource'             ,'TEXT'    ,'Roads Feature Class Source' ,2000,None,'']
+               ,['ssurgofc'                  ,'TEXT'    ,'SSURGO Feature Class'       ,255, None,'']
+               ,['ssurgofcsource'            ,'TEXT'    ,'SSURGO Feature Class Source',2000,None,'']
+               ,['vectorbuffer'              ,'DOUBLE'  ,'Vector Buffer Amount (Km)'  ,None,None,'']
+               ,['username'                  ,'TEXT'    ,'User Name'                  ,255, None,'']
+               ,['datecreated'               ,'DATE'    ,'Date Created'               ,None,None,'']
+               ,['notes'                     ,'TEXT'    ,'Notes'                      ,255, None,'']
              ]
          );
 
@@ -2239,7 +2240,7 @@ class RasterToResults(object):
       ##---------------------------------------------------------------------##
       param3 = arcpy.Parameter(
           displayName   = "Output Feature Class"
-         ,name          = "MapName"
+         ,name          = "OutputFeatureClass"
          ,datatype      = "DEFeatureClass"
          ,parameterType = "Required"
          ,direction     = "Output"
@@ -2268,10 +2269,194 @@ class RasterToResults(object):
    #...........................................................................
    def updateMessages(self,parameters):
 
-      if  parameters[0].valueAsText is not None  \
-      and parameters[0].valueAsText != "":
-         parameters[0].setErrorMessage(parameters[0].valueAsText);
+      return;
+
+   #...........................................................................
+   def execute(self,parameters,messages):
+
+      aprx = arcpy.mp.ArcGISProject(util.g_prj);
+
+      ##---------------------------------------------------------------------##
+      input_raster = parameters[1].valueAsText;
+      
+      str_simplify = parameters[2].valueAsText;
+      if str_simplify in ['true','TRUE','1','Yes','Y']:
+         str_simplify = 'SIMPLIFY';
+      else:
+         str_simplify = 'NO_SIMPLIFY'; 
          
+      output_fc = parameters[3].valueAsText;
+      
+      ##---------------------------------------------------------------------##
+      rez = arcpy.RasterToPolygon_conversion(
+          in_raster            = input_raster
+         ,out_polygon_features = output_fc
+         ,simplify             = str_simplify
+         ,field                = "suitability_score"
+         ,raster_field         = "VALUE"
+      );
+      
+      if rez.status == 4:
+         arcpy.AddMessage(".  Polygon conversion completed successfully.");
+      else:
+         raise Error("raster to polygon process failed with status " + str(rez.status));
+         
+      util.addField(
+          in_table          = output_fc
+         ,field_name        = "name"
+         ,field_type        = "TEXT"
+         ,field_alias       = "Name"
+         ,field_is_nullable = True
+      );
+
+      util.addField(
+          in_table          = output_fc
+         ,field_name        = "contamination_type"
+         ,field_type        = "TEXT"
+         ,field_alias       = "Contamination Type"
+         ,field_is_nullable = True
+      );
+
+      arcpy.AlterField_management(
+          in_table          = output_fc
+         ,field             = 'suitability_score'
+         ,new_field_alias   = 'Suitability Score'
+      );
+
+      util.addFieldCalc(
+          in_table          = output_fc
+         ,field_name        = "areasqkm"
+         ,field_type        = "DOUBLE"
+         ,field_alias       = "Geodetic Area (SqKm)"
+         ,field_is_nullable = True
+         ,calc_value        = "!Shape.geodesicArea@SQUAREKILOMETERS!"
+      );
+
+      util.addFieldCalc(
+          in_table          = output_fc
+         ,field_name        = "available_solid_waste_capacity_m3"
+         ,field_type        = "DOUBLE"
+         ,field_alias       = "Available Solid Waste Capacity (m3)"
+         ,field_is_nullable = True
+         ,calc_value        = "!areasqkm! * 1000000 * 0.4 / 0.3284"
+      );
+
+      util.addFieldCalc(
+          in_table          = output_fc
+         ,field_name        = "available_liquid_waste_capacity_L"
+         ,field_type        = "DOUBLE"
+         ,field_alias       = "Available Liquid Waste Capacity (L)"
+         ,field_is_nullable = True
+         ,calc_value        = "!areasqkm! * 1000000 * 0.4 / 0.0020975"
+      );
+      
+      util.addFieldCalc(
+          in_table          = output_fc
+         ,field_name        = "available_liquid_waste_capacity_m3"
+         ,field_type        = "DOUBLE"
+         ,field_alias       = "Available Liquid Waste Capacity (m3)"
+         ,field_is_nullable = True
+         ,calc_value        = "(!areasqkm! * 1000000 * 0.4 / 0.0020975) * 0.001"
+      );
+      
+      util.addField(
+          in_table          = output_fc
+         ,field_name        = "notes"
+         ,field_type        = "TEXT"
+         ,field_alias       = "Notes"
+         ,field_is_nullable = True
+      );
+      
+###############################################################################
+class PolygonToResults(object):
+
+   #...........................................................................
+   def __init__(self):
+
+      self.label              = "C3 Polygon To Results";
+      self.name               = "PolygonToResults";
+      self.description        = "PolygonToResults";
+      self.canRunInBackground = False;
+
+   #...........................................................................
+   def getParameterInfo(self):
+
+      aprx = arcpy.mp.ArcGISProject(util.g_prj);
+      
+      err_val  = None;
+      err_enb  = False;
+      parm_enb = True;
+      
+      cf = util.fetchConfig();
+      
+      if not util.checkAOISystem(cf=cf):
+         err_val  = "Areas of interest system has not been setup";
+         err_enb  = True;
+         parm_enb = False;
+         scenarios = [];
+         def_scenario = None;
+         
+      else:
+         if not util.checkScenarioSystem(aprx=aprx):
+            err_val   = "Scenario Storage has not been initialized.";
+            err_enb  = True;
+            parm_enb = False;
+            scenarios = [];
+            def_scenario = None;
+            
+         else:
+            scenarios,def_scenario = util.fetchScenarioIDs(aprx=aprx);
+            if len(scenarios) == 0:
+               err_val   = "No scenarios found to add to map.";
+               err_enb  = True;
+               parm_enb = False;
+
+      #########################################################################
+      if util.sniffEditingState(workspace=aprx.defaultGeodatabase):
+         err_val   = "Please save or delete all pending edits before proceeding.";
+         err_enb   = True;
+         parm_enb  = False;
+
+      param0 = arcpy.Parameter(
+          displayName   = ""
+         ,name          = "ErrorConditions"
+         ,datatype      = "GPString"
+         ,parameterType = "Optional"
+         ,direction     = "Input"
+         ,enabled       = err_enb
+      );
+      param0.value = err_val;
+      
+      ##---------------------------------------------------------------------##
+      param1 = arcpy.Parameter(
+          displayName   = "Output Feature Class"
+         ,name          = "OutputFeatureClass"
+         ,datatype      = "DEFeatureClass"
+         ,parameterType = "Required"
+         ,direction     = "Input"
+         ,enabled       = parm_enb
+      );
+ 
+      params = [
+          param0
+         ,param1
+      ];
+
+      return params;
+
+   #...........................................................................
+   def isLicensed(self):
+
+      return True;
+
+   #...........................................................................
+   def updateParameters(self,parameters):
+
+      return;
+
+   #...........................................................................
+   def updateMessages(self,parameters):
+
       return;
 
    #...........................................................................
@@ -3027,12 +3212,26 @@ class Scenario(object):
          if arcpy.Exists(wrkGDB + os.sep + "aoi"):
             arcpy.Delete_management(wrkGDB + os.sep + "aoi");
             
-         arcpy.FeatureClassToFeatureClass_conversion(
-             in_features  = cf['aoistorage'] + os.sep + util.g_aoi_fc
-            ,out_path     = wrkGDB
-            ,out_name     = 'aoi'
-            ,where_clause = "aoi_id = '" + self.aoi_id + "'"
+         # Work-around for Pro 3.4 date bugs
+         
+         arcpy.management.CreateFeatureclass(
+             out_path      = wrkGDB
+            ,out_name      = 'aoi'
+            ,geometry_type = 'POLYGON'
+            ,template      = cf['aoistorage'] + os.sep + util.g_aoi_fc
          );
+         
+         arcpy.management.Append(
+             inputs     = cf['aoistorage'] + os.sep + util.g_aoi_fc
+            ,target     = wrkGDB + os.sep + 'aoi'
+            ,expression = "aoi_id = '" + self.aoi_id + "'"
+         );
+         
+         #arcpy.conversion.ExportFeatures(
+         #    in_features  = cf['aoistorage'] + os.sep + util.g_aoi_fc
+         #   ,out_features = wrkGDB + os.sep + 'aoi'
+         #   ,where_clause = "aoi_id = '" + self.aoi_id + "'"
+         #);
       
       ##---------------------------------------------------------------------##
       util.deleteScenarioID(
