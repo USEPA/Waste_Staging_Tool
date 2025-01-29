@@ -634,6 +634,17 @@ class SpecifyCriteriaWeight(object):
          param8.value = ssurgoweight;
       else:
          param8.value = "NA";
+      
+      ##---------------------------------------------------------------------##
+      param9 = arcpy.Parameter(
+          displayName   = "Simplify Polygons"
+         ,name          = "Simplify Polygons"
+         ,datatype      = "GPBoolean"
+         ,parameterType = "Required"
+         ,direction     = "Input"
+         ,enabled       = parm_enb
+      );
+      param9.value = True;
 
       params = [
           param0
@@ -645,6 +656,7 @@ class SpecifyCriteriaWeight(object):
          ,param6
          ,param7
          ,param8
+         ,param9
       ];
 
       return params;
@@ -703,24 +715,36 @@ class SpecifyCriteriaWeight(object):
       scenario_id = parameters[2].valueAsText;
       if scenario_id == "" or scenario_id == " ":
          scenario_id = None;
+      
       map_name = parameters[3].valueAsText;
       if map_name == "" or map_name == " ":
          map_name = None;
+      
       slopeweight = parameters[4].valueAsText;
       if slopeweight == "" or slopeweight == " " or slopeweight == "NA":
          slopeweight = None;
+      
       landcoverweight = parameters[5].valueAsText;
       if landcoverweight == "" or landcoverweight == " " or landcoverweight == "NA":
          landcoverweight = None;
+      
       nhdweight = parameters[6].valueAsText;
       if nhdweight == "" or nhdweight == " " or nhdweight == "NA":
          nhdweight = None;
+      
       roadsweight = parameters[7].valueAsText;
       if roadsweight == "" or roadsweight == " " or roadsweight == "NA":
          roadsweight = None;
+      
       ssurgoweight = parameters[8].valueAsText;
       if ssurgoweight == "" or ssurgoweight == " " or ssurgoweight == "NA":
          ssurgoweight = None;
+
+      str_simplify = parameters[9].valueAsText;
+      if str_simplify in ['true','TRUE','1','Yes','Y']:
+         str_simplify = 'SIMPLIFY';
+      else:
+         str_simplify = 'NO_SIMPLIFY'; 
          
       arcpy.env.overwriteOutput = True;
       aprx = arcpy.mp.ArcGISProject(util.g_prj);
@@ -881,7 +905,7 @@ class SpecifyCriteriaWeight(object):
       rez = arcpy.RasterToPolygon_conversion(
           in_raster            = wrkGDB + os.sep + "scratch_" + scenario_id
          ,out_polygon_features = weightedsum
-         ,simplify             = "SIMPLIFY"
+         ,simplify             = str_simplify
          ,raster_field         = "VALUE"
       );
       
@@ -1190,17 +1214,20 @@ class FinalizeStagingParcelSelection(object):
       scenario_id = parameters[2].valueAsText;
       if scenario_id == "" or scenario_id == " ":
          scenario_id = None;
+      
       map_name = parameters[3].valueAsText;
       if map_name == "" or map_name == " ":
          map_name = None;
+      
       weightedsum = parameters[4].value;
       if weightedsum == "" or weightedsum == " ":
          weightedsum = None;
+      
       str_dissolve = parameters[5].valueAsText;
       if str_dissolve in ['true','TRUE','1','Yes','Y']:
          boo_dissolve = True;
       else:
-         boo_dissolve = False;
+         boo_dissolve = False; 
 
       arcpy.env.overwriteOutput = True;
       aprx = arcpy.mp.ArcGISProject(util.g_prj);
@@ -1883,7 +1910,7 @@ class ExportSaveResults(object):
          img = Image.open(map_image);
          hpercent = (baseheight / float(img.size[1]));
          wsize = int((float(img.size[0]) * float(hpercent)));
-         img = img.resize((wsize,baseheight),Image.ANTIALIAS);
+         img = img.resize((wsize,baseheight),Image.LANCZOS);
          img.save(map_image);
          
          img = openpyxl.drawing.image.Image(
