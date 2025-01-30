@@ -2176,28 +2176,6 @@ class RasterToResults(object):
       parm_enb = True;
       
       cf = util.fetchConfig();
-      
-      if not util.checkAOISystem(cf=cf):
-         err_val  = "Areas of interest system has not been setup";
-         err_enb  = True;
-         parm_enb = False;
-         scenarios = [];
-         def_scenario = None;
-         
-      else:
-         if not util.checkScenarioSystem(aprx=aprx):
-            err_val   = "Scenario Storage has not been initialized.";
-            err_enb  = True;
-            parm_enb = False;
-            scenarios = [];
-            def_scenario = None;
-            
-         else:
-            scenarios,def_scenario = util.fetchScenarioIDs(aprx=aprx);
-            if len(scenarios) == 0:
-               err_val   = "No scenarios found to add to map.";
-               err_enb  = True;
-               parm_enb = False;
 
       #########################################################################
       if util.sniffEditingState(workspace=aprx.defaultGeodatabase):
@@ -2228,6 +2206,18 @@ class RasterToResults(object):
       
       ##---------------------------------------------------------------------##
       param2 = arcpy.Parameter(
+          displayName   = "Raster Property"
+         ,name          = "RasterProperty"
+         ,datatype      = "GPString"
+         ,parameterType = "Required"
+         ,direction     = "Input"
+         ,enabled       = parm_enb
+         ,multiValue    = False
+      );
+      param2.value      = "Value";
+      
+      ##---------------------------------------------------------------------##
+      param3 = arcpy.Parameter(
           displayName   = "Simplify Polygons"
          ,name          = "Simplify Polygons"
          ,datatype      = "GPBoolean"
@@ -2235,10 +2225,10 @@ class RasterToResults(object):
          ,direction     = "Input"
          ,enabled       = parm_enb
       );
-      param2.value = True;
+      param3.value = True;
 
       ##---------------------------------------------------------------------##
-      param3 = arcpy.Parameter(
+      param4 = arcpy.Parameter(
           displayName   = "Output Feature Class"
          ,name          = "OutputFeatureClass"
          ,datatype      = "DEFeatureClass"
@@ -2252,6 +2242,7 @@ class RasterToResults(object):
          ,param1
          ,param2
          ,param3
+         ,param4
       ];
 
       return params;
@@ -2277,23 +2268,23 @@ class RasterToResults(object):
       aprx = arcpy.mp.ArcGISProject(util.g_prj);
 
       ##---------------------------------------------------------------------##
-      input_raster = parameters[1].valueAsText;
+      input_raster    = parameters[1].valueAsText;
+      raster_property = parameters[2].valueAsText;
       
-      str_simplify = parameters[2].valueAsText;
+      str_simplify = parameters[3].valueAsText;
       if str_simplify in ['true','TRUE','1','Yes','Y']:
          str_simplify = 'SIMPLIFY';
       else:
          str_simplify = 'NO_SIMPLIFY'; 
          
-      output_fc = parameters[3].valueAsText;
+      output_fc = parameters[4].valueAsText;
       
       ##---------------------------------------------------------------------##
       rez = arcpy.RasterToPolygon_conversion(
           in_raster            = input_raster
          ,out_polygon_features = output_fc
          ,simplify             = str_simplify
-         ,field                = "suitability_score"
-         ,raster_field         = "VALUE"
+         ,raster_field         = raster_property
       );
       
       if rez.status == 4:
@@ -2317,11 +2308,17 @@ class RasterToResults(object):
          ,field_is_nullable = True
       );
 
-      arcpy.AlterField_management(
-          in_table          = output_fc
-         ,field             = 'suitability_score'
-         ,new_field_alias   = 'Suitability Score'
-      );
+      desc = arcpy.Describe(output_fc);
+      flds = desc.fields;
+      for fld in flds:
+         if fld.name in [raster_property,'gridcode','grid_code']:
+            arcpy.AlterField_management(
+                in_table          = output_fc
+               ,field             = fld.name
+               ,new_field_name    = 'suitability_score'
+               ,new_field_alias   = 'Suitability Score'
+            );
+            break;
 
       util.addFieldCalc(
           in_table          = output_fc
